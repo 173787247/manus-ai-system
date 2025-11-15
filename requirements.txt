@@ -1,0 +1,65 @@
+# 核心依赖
+python>=3.9
+
+# LLM相关
+openai>=1.0.0
+anthropic>=0.18.0
+langchain>=0.1.0
+langchain-openai>=0.0.5
+langchain-anthropic>=0.1.0
+
+# GUI操作
+pyautogui>=0.9.54
+Pillow>=10.0.0
+opencv-python>=4.8.0
+
+# 向量数据库
+chromadb>=0.4.0
+sentence-transformers>=2.2.0
+
+# 知识图谱
+networkx>=3.0
+rdflib>=6.3.0
+
+# 数据库
+pymongo>=4.5.0
+psycopg2-binary>=2.9.0
+sqlalchemy>=2.0.0
+
+# Web框架
+gradio>=4.0.0
+fastapi>=0.104.0
+uvicorn>=0.24.0
+
+# 异步处理
+asyncio>=3.4.3
+aiohttp>=3.9.0
+celery>=5.3.0
+
+# 工具库
+pydantic>=2.0.0
+python-dotenv>=1.0.0
+pyyaml>=6.0
+requests>=2.31.0
+
+# 日志和监控
+loguru>=0.7.0
+prometheus-client>=0.19.0
+
+# 测试
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-html>=3.2.0
+pytest-mock>=3.12.0
+
+# 开发工具
+black>=23.0.0
+pylint>=3.0.0
+mypy>=1.7.0
+
+# 其他
+numpy>=1.24.0
+pandas>=2.0.0
+tqdm>=4.66.0
+

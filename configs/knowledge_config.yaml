@@ -1,0 +1,18 @@
+# 知识库配置
+knowledge:
+  vector_store:
+    collection: "knowledge"
+    embedding_model: "paraphrase-multilingual-MiniLM-L12-v2"
+    
+  knowledge_graph:
+    enabled: true
+    storage: "networkx"
+    
+  document_store:
+    enabled: true
+    storage: "memory"
+    
+  retrieval:
+    top_k: 5
+    rerank: true
+

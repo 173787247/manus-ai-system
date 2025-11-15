@@ -1,0 +1,28 @@
+# GUI配置
+gui:
+  desktop_env:
+    provider: "local"  # local | vm | cloud
+    os_type: "Windows"  # Windows | macOS | Linux
+    action_space: "pyautogui"
+    screen_size: [1920, 1080]
+    headless: false
+    
+  action:
+    pause: 1.0
+    failsafe: true
+    whitelist:
+      - "moveTo"
+      - "click"
+      - "doubleClick"
+      - "rightClick"
+      - "typewrite"
+      - "press"
+      - "scroll"
+      
+  safety:
+    coordinate_check: true
+    action_throttle: 5
+    blacklist:
+      - "rm -rf"
+      - "system"
+

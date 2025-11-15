@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  manus-ai:
+    build: .
+    container_name: manus-ai
+    ports:
+      - "7860:7860"  # Gradio Web UI
+      - "8000:8000"  # FastAPI
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY:-}
+      - MONGODB_URI=mongodb://mongodb:27017
+      - POSTGRES_URI=postgresql://manus:manus@postgres:5432/manus
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./logs:/app/logs
+    depends_on:
+      - mongodb
+      - postgres
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  mongodb:
+    image: mongo:7
+    container_name: manus-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=manus
+      - MONGO_INITDB_ROOT_PASSWORD=manus
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15
+    container_name: manus-postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=manus
+      - POSTGRES_PASSWORD=manus
+      - POSTGRES_DB=manus
+    restart: unless-stopped
+
+volumes:
+  mongodb_data:
+  postgres_data:
+

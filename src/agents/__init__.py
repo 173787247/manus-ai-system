@@ -5,6 +5,7 @@ from .knowledge_agent import KnowledgeAgent
 from .code_agent import CodeAgent
 from .gui_agent import GUIAgent
 from .evaluation_agent import EvaluationAgent
+from .customer_service_agent import CustomerServiceAgent
 
 __all__ = [
     "BaseAgent",
@@ -13,5 +14,5 @@ __all__ = [
     "CodeAgent",
     "GUIAgent",
     "EvaluationAgent",
+    "CustomerServiceAgent",
 ]
-

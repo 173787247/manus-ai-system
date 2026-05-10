@@ -53,8 +53,7 @@ flowchart TB
 ## 快速开始（最小路径）
 
 ```bash
-# 将下方 URL 换成你的 GitHub 仓库地址
-git clone https://github.com/<用户名>/<仓库名>.git
+git clone https://github.com/173787247/manus-ai-system.git
 cd manus-ai-system
 
 # 依赖安装（国内可用清华 PyPI 镜像加速「拉包」）

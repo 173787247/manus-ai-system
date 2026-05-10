@@ -72,27 +72,50 @@ class AgentManager:
     
     def _initialize_agents(self):
         """初始化所有智能体"""
-        agent_configs = self.config.get("agents", {})
+        # 支持两种配置格式：
+        # 1. {"agents": {"planning": {...}, ...}} 
+        # 2. {"planning": {...}, ...} (直接传入agents字典)
+        agent_configs = self.config.get("agents", self.config)
         
         # 初始化规划智能体
         if "planning" in agent_configs:
-            self.agents["planning"] = PlanningAgent(agent_configs["planning"])
+            try:
+                self.agents["planning"] = PlanningAgent(agent_configs["planning"])
+                logger.info("规划智能体初始化成功")
+            except Exception as e:
+                logger.error(f"规划智能体初始化失败: {e}")
         
         # 初始化知识智能体
         if "knowledge" in agent_configs:
-            self.agents["knowledge"] = KnowledgeAgent(agent_configs["knowledge"])
+            try:
+                self.agents["knowledge"] = KnowledgeAgent(agent_configs["knowledge"])
+                logger.info("知识智能体初始化成功")
+            except Exception as e:
+                logger.error(f"知识智能体初始化失败: {e}")
         
         # 初始化代码智能体
         if "code" in agent_configs:
-            self.agents["code"] = CodeAgent(agent_configs["code"])
+            try:
+                self.agents["code"] = CodeAgent(agent_configs["code"])
+                logger.info("代码智能体初始化成功")
+            except Exception as e:
+                logger.error(f"代码智能体初始化失败: {e}")
         
         # 初始化GUI智能体
         if "gui" in agent_configs:
-            self.agents["gui"] = GUIAgent(agent_configs["gui"])
+            try:
+                self.agents["gui"] = GUIAgent(agent_configs["gui"])
+                logger.info("GUI智能体初始化成功")
+            except Exception as e:
+                logger.error(f"GUI智能体初始化失败: {e}")
         
         # 初始化评估智能体
         if "evaluation" in agent_configs:
-            self.agents["evaluation"] = EvaluationAgent(agent_configs["evaluation"])
+            try:
+                self.agents["evaluation"] = EvaluationAgent(agent_configs["evaluation"])
+                logger.info("评估智能体初始化成功")
+            except Exception as e:
+                logger.error(f"评估智能体初始化失败: {e}")
         
         logger.info(f"已初始化 {len(self.agents)} 个智能体: {list(self.agents.keys())}")
     

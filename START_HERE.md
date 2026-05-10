@@ -77,9 +77,9 @@ start.bat
 
 ## 📚 详细文档
 
-- **用户指南**: `USER_GUIDE.md`
-- **快速启动**: `快速启动指南.md`
-- **立即开始**: `立即开始使用.md`
+- **用户指南**: [`USER_GUIDE.md`](USER_GUIDE.md)
+- **快速上手**: [`QUICK_START.md`](QUICK_START.md)
+- **仓库说明**: [`README.md`](README.md)
 
 ---
 

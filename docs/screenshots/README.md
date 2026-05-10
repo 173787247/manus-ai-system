@@ -7,6 +7,6 @@
 3. `03-logs-or-cost.png` — 日志或成本统计（也可用仓库内 `03-cost-summary.txt` 佐证）。
 4. **CI**：推送后在 GitHub **Actions** 截取绿色运行记录（即 `01-ci-success.png`）。
 
-说明：若暂未导出 PNG，可使用已提交的 **`02-telegram-send-response.txt`**（`sendMessage` API 返回，`"ok":true`）与 **`03-cost-summary.txt`** 作为辅助材料；正式提交仍以 PNG 截图（手机 Telegram + 终端）为佳。
+说明：成本类也可用文本佐证 **`03-cost-summary.txt`**（示例数据汇总）。Telegram 推送请以 **`02-telegram-push.png`** 手机截图为准。
 
 提交前将文件放入此目录并在根目录 `README.md` 中已有总体说明。

@@ -331,6 +331,10 @@ gui_result = manager.gui_agent.execute(plan['actions'])
 
 成本日志示例（可复制到 `logs/manus_cost.jsonl` 后运行 `python v4-production/scripts/cost_log_summary.py`）：[`docs/sample_manus_cost.jsonl`](docs/sample_manus_cost.jsonl)
 
+**生成真实 `logs/manus_cost.jsonl`**：每次调用 LLM 后把 usage 记下来，在仓库根目录执行  
+`python scripts/log_manus_cost.py --model <模型名> --prompt <输入token> --completion <输出token> --cost <美元>`  
+（数字来自 API 返回的 `usage` 或 [OpenAI 用量页](https://platform.openai.com/usage) 估算。）
+
 ## 📄 许可证
 
 MIT License

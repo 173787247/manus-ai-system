@@ -6,4 +6,6 @@
 2. `02-telegram-push.png` — Telegram 收到机器人消息（使用 `v4-production/scripts/telegram_notify.py`）。
 3. `03-logs-or-cost.png` — 运行日志或 `cost_log_summary.py` / `v2-automation/output/run_summary.txt` 尾部输出。
 
+4. `git push` 到 GitHub 后，打开仓库 **Actions** 页面截取第一张「CI 成功」图（与 `01-ci-success.png` 对应）。
+
 提交前将文件放入此目录并在根目录 `README.md` 中已有总体说明。

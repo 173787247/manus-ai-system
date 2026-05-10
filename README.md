@@ -53,7 +53,9 @@ flowchart TB
 ## 快速开始（最小路径）
 
 ```bash
-git clone <你的仓库> && cd manus-ai-system
+# 将下方 URL 换成你的 GitHub 仓库地址
+git clone https://github.com/<用户名>/<仓库名>.git
+cd manus-ai-system
 
 # 依赖安装（国内可用清华 PyPI 镜像加速「拉包」）
 pip install -r requirements.txt \
@@ -144,78 +146,46 @@ manus-ai-system/
 ├── requirements-ci.txt              # CI / 轻量测试依赖
 ├── .env.example
 ├── .github/workflows/ci.yml         # GitHub Actions
+├── main.py / run_demo.py            # 入口
 ├── v1-skeleton/                     # V1 骨架示例
 ├── v2-automation/                   # V2 自动化脚本与摘要输出
 ├── v3-multi-agent/                  # V3 多智能体演示
-├── v4-production/                 # V4 生产化脚本（Telegram / 成本）
-├── docs/                               # 文档目录
-│   ├── screenshots/                    # 提交用运行截图（按需添加）
+├── v4-production/                   # V4 生产化脚本（Telegram / 成本）
+├── docs/
+│   ├── screenshots/                 # 提交用运行截图（按需添加）
+│   ├── sample_manus_cost.jsonl      # 成本汇总示例数据
 │   ├── 01-系统架构设计.md
-│   ├── 02-技术选型.md                  # 技术选型说明
-│   ├── 03-智能体设计.md                # 智能体详细设计
-│   ├── 04-知识与推理.md                # 知识管理设计
-│   ├── 05-自主学习与进化.md            # 学习机制设计
-│   ├── 06-部署与应用场景.md            # 部署指南
-│   └── 07-API文档.md                   # API接口文档
-├── docker-compose.yml                  # Docker编排
-├── Dockerfile                          # Docker镜像
-│   ├── agents/                         # 智能体模块
-│   │   ├── __init__.py
-│   │   ├── base_agent.py              # 基础智能体类
-│   │   ├── planning_agent.py          # 规划智能体
-│   │   ├── knowledge_agent.py         # 知识检索智能体
-│   │   ├── code_agent.py               # 代码生成智能体
-│   │   ├── gui_agent.py                # GUI操作智能体
-│   │   └── evaluation_agent.py        # 评估智能体
-│   ├── core/                           # 核心模块
-│   │   ├── __init__.py
-│   │   ├── agent_manager.py           # 智能体管理器
-│   │   ├── task_planner.py             # 任务规划器
-│   │   ├── task_executor.py            # 任务执行器
-│   │   └── knowledge_base.py          # 知识库管理
-│   ├── gui/                            # GUI执行引擎
-│   │   ├── __init__.py
-│   │   ├── desktop_env.py              # 桌面环境封装
-│   │   ├── screen_observer.py          # 屏幕观察器
-│   │   ├── action_executor.py          # 动作执行器
-│   │   └── action_parser.py            # 动作解析器
-│   ├── knowledge/                      # 知识管理
-│   │   ├── __init__.py
-│   │   ├── vector_store.py             # 向量存储
-│   │   ├── knowledge_graph.py          # 知识图谱
-│   │   ├── document_store.py           # 文档存储
-│   │   └── retrieval.py                # 检索服务
-│   ├── learning/                       # 学习模块
-│   │   ├── __init__.py
-│   │   ├── experience_store.py        # 经验存储
-│   │   ├── strategy_optimizer.py       # 策略优化器
-│   │   └── performance_evaluator.py   # 性能评估器
-│   ├── recording/                      # 记录模块
-│   │   ├── __init__.py
-│   │   ├── execution_logger.py        # 执行日志
-│   │   ├── replay_system.py            # 回放系统
-│   │   └── visualizer.py              # 可视化工具
-│   └── ui/                             # 用户界面
-│       ├── __init__.py
-│       ├── web_ui.py                   # Web界面
-│       ├── cli.py                      # 命令行界面
-│       └── api.py                      # API接口
-├── configs/                             # 配置文件
-│   ├── agent_config.yaml               # 智能体配置
-│   ├── knowledge_config.yaml           # 知识库配置
-│   └── gui_config.yaml                 # GUI配置
-├── data/                                # 数据目录
-│   ├── knowledge/                      # 知识数据
-│   ├── experiences/                    # 经验数据
-│   └── recordings/                     # 记录数据
-├── tests/                               # 测试文件
-│   ├── test_agents.py
-│   ├── test_planner.py
-│   └── test_gui.py
-└── scripts/                             # 脚本工具
-    ├── setup.sh                        # 安装脚本
-    ├── start.sh                        # 启动脚本
-    └── train_knowledge.py              # 知识库训练
+│   ├── 02-技术选型.md
+│   ├── 03-智能体设计.md
+│   ├── 04-知识与推理.md
+│   ├── 05-自主学习与进化.md
+│   ├── 06-部署与应用场景.md
+│   └── 07-API文档.md（若存在）
+├── docker-compose.yml
+├── Dockerfile
+├── src/
+│   ├── agents/                      # 智能体模块
+│   ├── core/
+│   ├── gui/
+│   ├── knowledge/
+│   ├── learning/
+│   ├── recording/
+│   └── ui/
+├── configs/
+├── data/                            # 本地数据（默认不入库）
+├── tests/
+│   ├── test_agent_manager.py
+│   ├── test_base_agent.py
+│   ├── test_gui_agent.py
+│   ├── test_integration.py
+│   ├── test_knowledge_agent.py
+│   ├── test_planning_agent.py
+│   └── test_task_executor.py
+└── scripts/
+    ├── verify_graduation.ps1        # 提交前一键校验（Windows）
+    ├── verify_graduation.sh         # 提交前一键校验（Unix）
+    ├── run_tests.bat
+    └── run_tests.sh
 ```
 
 ## 🚀 快速开始
@@ -358,6 +328,7 @@ gui_result = manager.gui_agent.execute(plan['actions'])
 | 配置文件 | [`.env.example`](.env.example)、[`.gitignore`](.gitignore)、[`requirements.txt`](requirements.txt) |
 | 运行截图 ≥3 | 将 CI 通过、Telegram、`cost_log_summary` 或测试日志保存到 [`docs/screenshots/`](docs/screenshots/)（见该目录说明） |
 | Git 历史 | 提交信息体现渐进开发（建议 ≥10 条）；推送前执行 `git log --oneline` 自检 |
+| 一键本地校验 | 仓库根目录执行 `scripts/verify_graduation.ps1`（Windows）或 `bash scripts/verify_graduation.sh`（Linux/macOS） |
 
 成本日志示例（可复制到 `logs/manus_cost.jsonl` 后运行 `python v4-production/scripts/cost_log_summary.py`）：[`docs/sample_manus_cost.jsonl`](docs/sample_manus_cost.jsonl)
 

@@ -45,6 +45,9 @@ logs/
 # ChromaDB
 chroma_db/
 
+# V2 自动化本地生成摘要（可重复运行生成）
+v2-automation/output/run_summary.txt
+
 # OS
 .DS_Store
 Thumbs.db

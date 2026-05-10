@@ -105,17 +105,15 @@ class GUIAgent(BaseAgent):
         Returns:
             思考结果
         """
-        if not self.vl_model:
-            return {
-                "status": "error",
-                "message": "VL模型未初始化",
-                "actions": []
-            }
-        
         try:
+            # 如果没有VL模型，使用规则方法
+            if not self.vl_model:
+                return self._think_rule_based(task)
+            
             screenshot_bytes = observation.get("screenshot")
             if not screenshot_bytes:
-                return {"status": "error", "message": "无截图数据", "actions": []}
+                # 如果没有截图，也使用规则方法
+                return self._think_rule_based(task)
             
             # 编码截图
             screenshot_b64 = base64.b64encode(screenshot_bytes).decode('utf-8')
@@ -147,7 +145,77 @@ class GUIAgent(BaseAgent):
             
         except Exception as e:
             logger.error(f"思考过程失败: {e}")
-            return {"status": "error", "message": str(e), "actions": []}
+            # 出错时也尝试使用规则方法
+            return self._think_rule_based(task)
+    
+    def _think_rule_based(self, task: str) -> Dict[str, Any]:
+        """
+        基于规则的任务解析（备用方法）
+        
+        Args:
+            task: 任务描述
+            
+        Returns:
+            思考结果
+        """
+        task_lower = task.lower()
+        actions = []
+        
+        # 解析常见任务
+        if "打开浏览器" in task or ("打开" in task and "浏览器" in task):
+            # Windows: Win+R打开运行，输入浏览器路径或名称
+            actions.append("hotkey('win', 'r')")
+            actions.append("sleep(0.5)")
+            if "百度" in task or "baidu" in task_lower:
+                actions.append("typewrite('www.baidu.com')")
+            elif "chrome" in task_lower:
+                actions.append("typewrite('chrome')")
+            elif "edge" in task_lower:
+                actions.append("typewrite('msedge')")
+            else:
+                actions.append("typewrite('chrome')")
+            actions.append("press('enter')")
+            actions.append("sleep(2)")
+        
+        if "输入" in task or "搜索" in task:
+            # 提取搜索关键词
+            import re
+            # 查找引号中的内容或"搜索"后的内容
+            search_match = re.search(r'搜索["\']?([^"\']+)["\']?', task)
+            if not search_match:
+                search_match = re.search(r'输入["\']?([^"\']+)["\']?', task)
+            if search_match:
+                search_text = search_match.group(1)
+            else:
+                # 尝试提取"搜索"或"输入"后的内容
+                parts = re.split(r'搜索|输入', task)
+                if len(parts) > 1:
+                    search_text = parts[1].strip().strip('"').strip("'")
+                else:
+                    search_text = "AI Agent"  # 默认值
+            
+            # 点击搜索框（通常在浏览器中间或顶部）
+            actions.append("click(960, 200)")
+            actions.append("sleep(0.5)")
+            actions.append(f"typewrite('{search_text}')")
+            actions.append("sleep(0.5)")
+            actions.append("press('enter')")
+            actions.append("sleep(2)")
+        
+        if "保存" in task:
+            actions.append("hotkey('ctrl', 's')")
+            actions.append("sleep(1)")
+        
+        if not actions:
+            # 如果没有匹配到任何规则，返回基本操作
+            actions.append("sleep(1)")
+            actions.append("DONE")
+        
+        return {
+            "status": "success",
+            "response": "\n".join(actions),
+            "actions": self.action_parser.parse("\n".join(actions))
+        }
     
     def act(self, actions: List[str]) -> Dict[str, Any]:
         """
@@ -166,19 +234,32 @@ class GUIAgent(BaseAgent):
             import pyautogui
             results = []
             
+            import time
             for action in actions:
                 if action in ["DONE", "FAIL"]:
                     return {"status": action, "results": results}
                 
                 if action == "WAIT":
-                    import time
                     time.sleep(1)
                     continue
+                
+                # 处理sleep命令
+                if action.startswith("sleep("):
+                    try:
+                        # 提取sleep的时间参数
+                        sleep_time = float(action.replace("sleep(", "").replace(")", "").strip().strip("'").strip('"'))
+                        time.sleep(sleep_time)
+                        results.append({"action": action, "status": "success"})
+                        continue
+                    except Exception as e:
+                        logger.warning(f"Sleep执行失败: {action}, 错误: {e}")
+                        results.append({"action": action, "status": "error", "error": str(e)})
+                        continue
                 
                 # 执行PyAutoGUI命令
                 try:
                     # 安全执行
-                    exec(f"pyautogui.{action}", {"pyautogui": pyautogui})
+                    exec(f"pyautogui.{action}", {"pyautogui": pyautogui, "time": time})
                     results.append({"action": action, "status": "success"})
                 except Exception as e:
                     logger.warning(f"动作执行失败: {action}, 错误: {e}")
@@ -313,11 +394,21 @@ class ActionParser:
         return matches if matches else [text]
     
     def _extract_pyautogui_commands(self, code: str) -> List[str]:
-        """提取PyAutoGUI命令"""
+        """提取PyAutoGUI命令和其他支持的命令"""
+        actions = []
+        
+        # 提取PyAutoGUI命令
         pattern = r'pyautogui\.\w+\([^)]*\)'
         matches = self.re.findall(pattern, code)
         # 移除 pyautogui. 前缀，只保留方法调用部分
-        return [match.replace("pyautogui.", "") for match in matches]
+        actions.extend([match.replace("pyautogui.", "") for match in matches])
+        
+        # 提取sleep命令（不带pyautogui前缀）
+        sleep_pattern = r'sleep\([^)]*\)'
+        sleep_matches = self.re.findall(sleep_pattern, code)
+        actions.extend(sleep_matches)
+        
+        return actions
     
     def _extract_control_chars(self, text: str) -> List[str]:
         """提取控制符"""
@@ -331,7 +422,7 @@ class ActionParser:
         whitelist = [
             "moveTo", "click", "doubleClick", "rightClick",
             "typewrite", "press", "keyDown", "keyUp",
-            "scroll", "drag", "dragTo"
+            "scroll", "drag", "dragTo", "hotkey", "sleep"
         ]
         
         for action in actions:

@@ -229,20 +229,26 @@ class PlanningAgent(BaseAgent):
         """
         description_lower = description.lower()
         
-        if any(keyword in description_lower for keyword in ["搜索", "查找", "检索"]):
-            return "knowledge_query"
+        # GUI相关关键词优先判断
+        if any(keyword in description_lower for keyword in ["打开", "点击", "输入", "移动", "浏览器", "记事本", "excel", "保存"]):
+            return "gui_action"
+        # 如果包含搜索但上下文是浏览器/GUI，也是GUI操作
+        elif any(keyword in description_lower for keyword in ["搜索", "查找"]) and any(keyword in description_lower for keyword in ["浏览器", "百度", "google"]):
+            return "gui_action"
         elif any(keyword in description_lower for keyword in ["代码", "生成", "编写"]):
             return "code_generation"
-        elif any(keyword in description_lower for keyword in ["点击", "输入", "打开", "移动"]):
-            return "gui_action"
+        elif any(keyword in description_lower for keyword in ["搜索", "查找", "检索"]):
+            return "knowledge_query"
         else:
-            return "unknown"
+            return "gui_action"  # 默认为GUI操作
     
     def _extract_steps_rule_based(self, instruction: str) -> List[str]:
         """基于规则提取步骤"""
-        # 简单实现：按句号或逗号分割
+        # 支持中文和英文逗号、分号分割
         steps = []
-        for part in instruction.split("，"):
+        # 先按中文逗号分割
+        parts = instruction.replace("，", "|").replace(",", "|").replace("；", "|").replace(";", "|").split("|")
+        for part in parts:
             part = part.strip()
             if part:
                 steps.append(part)

@@ -4,7 +4,91 @@
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Docker](https://img.shields.io/badge/docker-ready-blue.svg)](https://www.docker.com)
 
-## 📋 项目概述
+## 项目名称与一句话
+
+**Manus AI 代理系统** — 面向桌面场景的工业级多智能体框架，集成任务规划、**多源知识检索（向量 / 关键词 / 图谱）**、GUI 自动化与可观测能力。
+
+## 版本演进（对齐课程 V1–V4）
+
+| 目录 | 说明 |
+|------|------|
+| [v1-skeleton](v1-skeleton/) | 骨架：`BaseAgent` 抽象 + 最小 `EchoAgent` 可运行示例 |
+| [v2-automation](v2-automation/) | 自动化：本地 `pytest` + `output/run_summary.txt` 摘要 |
+| [v3-multi-agent](v3-multi-agent/) | 多智能体：`AgentManager` + `MessageBus` 演示脚本 |
+| [v4-production](v4-production/) | 生产化：CI、Docker、Telegram / 成本日志脚本说明 |
+
+**完整业务代码**位于仓库根目录 [`src/`](src/)（非重复拷贝）；上表为渐进交付边界说明。
+
+## 架构图（Mermaid）
+
+```mermaid
+flowchart TB
+  subgraph UI["用户交互"]
+    Web[Gradio Web UI]
+    CLI[CLI]
+  end
+  subgraph Agents["多智能体层"]
+    AM[AgentManager]
+    P[PlanningAgent]
+    K[KnowledgeAgent]
+    C[CodeAgent]
+    G[GUIAgent]
+    E[EvaluationAgent]
+  end
+  subgraph Core["任务与知识"]
+    TP[TaskPlanner / Executor]
+    KB[KnowledgeBase / Vector / Graph]
+  end
+  Web --> AM
+  CLI --> AM
+  AM --> P
+  AM --> K
+  AM --> C
+  AM --> G
+  AM --> E
+  P --> TP
+  K --> KB
+```
+
+## 快速开始（最小路径）
+
+```bash
+git clone <你的仓库> && cd manus-ai-system
+
+# 依赖安装（国内可用清华 PyPI 镜像加速「拉包」）
+pip install -r requirements.txt \
+  -i https://pypi.tuna.tsinghua.edu.cn/simple \
+  --trusted-host pypi.tuna.tsinghua.edu.cn
+
+# 或先全局指定镜像（之后直接 pip install 即可）
+# pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+# pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
+copy .env.example .env   # Windows；Linux/Mac: cp .env.example .env
+# 编辑 .env 填入 OPENAI_API_KEY（可选；无 Key 时部分能力走规则/模拟）
+
+# Web 演示
+python main.py
+# 或交互选择 CLI/Web
+python run_demo.py
+```
+
+**与 CI 一致的轻量依赖**（同样需要镜像时，命令相同，把 `requirements.txt` 换成 `requirements-ci.txt`）：
+
+```bash
+pip install -r requirements-ci.txt \
+  -i https://pypi.tuna.tsinghua.edu.cn/simple \
+  --trusted-host pypi.tuna.tsinghua.edu.cn
+pytest tests/ -v
+```
+
+**V2 脚本使用镜像**：在安装前设置环境变量即可（见 `v2-automation/README.md`）。
+
+**截图占位**：将流水线 / Telegram / 日志或成本输出保存到 [`docs/screenshots/`](docs/screenshots/)。
+
+---
+
+## 📋 项目概述（详细）
 
 Manus AI 是一个工业级的多智能体代理系统，结合了 GUI-Agent 的视觉操作能力、多智能体协作、知识检索、任务规划与执行、自主学习等核心能力。系统能够像人类一样观察屏幕、理解任务、规划步骤并执行操作，构建完整的"感知-决策-行动"闭环。
 
@@ -47,59 +131,34 @@ Manus AI 是一个工业级的多智能体代理系统，结合了 GUI-Agent 的
 - **决策解释**: 每一步决策的详细说明
 - **日志追踪**: 完整的审计日志
 
-## 🏗️ 系统架构
+## 🏗️ 系统架构（补充）
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                    用户交互界面层                              │
-│  (Gradio Web UI / CLI / API)                                │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  多智能体管理模块                              │
-│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐      │
-│  │ 规划智能体│ │ 知识智能体│ │ 代码智能体│ │ GUI智能体 │      │
-│  └──────────┘ └──────────┘ └──────────┘ └──────────┘      │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  任务规划与执行引擎                            │
-│  • 任务分解模块  • 执行调度器  • 错误恢复  • 进度跟踪          │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  知识库模块                                   │
-│  • 向量数据库  • 知识图谱  • 文档库  • 代码库  • 经验库        │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  GUI执行引擎                                  │
-│  • DesktopEnv  • 屏幕观察  • PyAutoGUI  • 动作解析           │
-└──────────────────────┬──────────────────────────────────────┘
-                       │
-┌──────────────────────▼──────────────────────────────────────┐
-│                  过程记录与回放模块                            │
-│  • 执行日志  • 截图保存  • 过程回放  • 可视化分析             │
-└─────────────────────────────────────────────────────────────┘
-```
+分层示意图见上文 **架构图（Mermaid）**；更细的模块说明见 [`docs/01-系统架构设计.md`](docs/01-系统架构设计.md)。
 
 ## 📁 项目结构
 
 ```
 manus-ai-system/
-├── README.md                          # 项目说明
-├── requirements.txt                    # 依赖包
-├── docker-compose.yml                  # Docker编排
-├── Dockerfile                          # Docker镜像
+├── README.md
+├── requirements.txt
+├── requirements-ci.txt              # CI / 轻量测试依赖
+├── .env.example
+├── .github/workflows/ci.yml         # GitHub Actions
+├── v1-skeleton/                     # V1 骨架示例
+├── v2-automation/                   # V2 自动化脚本与摘要输出
+├── v3-multi-agent/                  # V3 多智能体演示
+├── v4-production/                 # V4 生产化脚本（Telegram / 成本）
 ├── docs/                               # 文档目录
-│   ├── 01-系统架构设计.md              # 系统架构详细设计
+│   ├── screenshots/                    # 提交用运行截图（按需添加）
+│   ├── 01-系统架构设计.md
 │   ├── 02-技术选型.md                  # 技术选型说明
 │   ├── 03-智能体设计.md                # 智能体详细设计
 │   ├── 04-知识与推理.md                # 知识管理设计
 │   ├── 05-自主学习与进化.md            # 学习机制设计
 │   ├── 06-部署与应用场景.md            # 部署指南
 │   └── 07-API文档.md                   # API接口文档
-├── src/                                # 源代码
+├── docker-compose.yml                  # Docker编排
+├── Dockerfile                          # Docker镜像
 │   ├── agents/                         # 智能体模块
 │   │   ├── __init__.py
 │   │   ├── base_agent.py              # 基础智能体类
@@ -164,9 +223,8 @@ manus-ai-system/
 ### 环境要求
 
 - Python 3.9+
-- Docker Desktop (已安装)
-- RTX-5080 GPU (可选，用于加速)
-- 256GB 内存
+- Docker Desktop（**可选**，仅在使用 `docker-compose` 部署时需要）
+- NVIDIA GPU（**可选**；本地向量模型等若安装 CUDA 版 PyTorch 可利用显卡）
 
 ### 安装步骤
 
@@ -175,15 +233,23 @@ manus-ai-system/
 cd manus-ai-system
 ```
 
-2. **安装依赖**
+2. **安装依赖**（国内可使用清华 PyPI 镜像）
 ```bash
-pip install -r requirements.txt
+pip install -r requirements.txt \
+  -i https://pypi.tuna.tsinghua.edu.cn/simple \
+  --trusted-host pypi.tuna.tsinghua.edu.cn
 ```
 
 3. **配置环境变量**
 ```bash
+# Windows (PowerShell)
+Copy-Item .env.example .env
+
+# Linux/Mac
 cp .env.example .env
-# 编辑 .env 文件，配置 API 密钥等
+
+# 编辑 .env 文件，填入您的 OpenAI API Key
+# 详细配置说明请参考: API_CONFIG_GUIDE.md
 ```
 
 4. **启动系统**
@@ -250,7 +316,24 @@ gui_result = manager.gui_agent.execute(plan['actions'])
 
 ## 🔧 配置说明
 
+### API Key 配置（重要）
+
+**首次使用必须配置：**
+1. 复制 `.env.example` 为 `.env`
+2. 在 `.env` 文件中填入您的 OpenAI API Key
+3. 详细配置指南：[API_CONFIG_GUIDE.md](API_CONFIG_GUIDE.md)
+
+**获取 OpenAI API Key：**
+- 访问 [OpenAI Platform](https://platform.openai.com/api-keys)
+- 注册/登录后创建新的 API Key
+- 复制 Key 到 `.env` 文件中
+
+**注意：** 即使没有 API Key，系统也可以运行，但功能会受限（使用规则方法作为备用）。
+
+### 其他配置
+
 详细配置说明请参考：
+- [API配置指南](API_CONFIG_GUIDE.md) - **API Key配置必读**
 - [系统架构设计](docs/01-系统架构设计.md)
 - [技术选型](docs/02-技术选型.md)
 - [智能体设计](docs/03-智能体设计.md)
@@ -265,6 +348,18 @@ gui_result = manager.gui_agent.execute(plan['actions'])
 ## 🤝 贡献指南
 
 欢迎提交 Issue 和 Pull Request！
+
+## 毕业设计提交自检（对照课程要求）
+
+| 要求 | 说明 |
+|------|------|
+| V1–V4 目录 | 根目录 [`v1-skeleton/`](v1-skeleton/)～[`v4-production/`](v4-production/)，完整业务代码在 [`src/`](src/) |
+| README | 上文含项目名称、一句话描述、Mermaid 架构图、快速开始 |
+| 配置文件 | [`.env.example`](.env.example)、[`.gitignore`](.gitignore)、[`requirements.txt`](requirements.txt) |
+| 运行截图 ≥3 | 将 CI 通过、Telegram、`cost_log_summary` 或测试日志保存到 [`docs/screenshots/`](docs/screenshots/)（见该目录说明） |
+| Git 历史 | 提交信息体现渐进开发（建议 ≥10 条）；推送前执行 `git log --oneline` 自检 |
+
+成本日志示例（可复制到 `logs/manus_cost.jsonl` 后运行 `python v4-production/scripts/cost_log_summary.py`）：[`docs/sample_manus_cost.jsonl`](docs/sample_manus_cost.jsonl)
 
 ## 📄 许可证
 

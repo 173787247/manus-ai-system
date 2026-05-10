@@ -15,9 +15,32 @@ import os
 import sys
 import urllib.error
 import urllib.request
+from pathlib import Path
+
+
+def _load_dotenv() -> None:
+    """从仓库根目录 .env 加载（若已设置环境变量则不覆盖）。"""
+    root = Path(__file__).resolve().parents[2]
+    env_path = root / ".env"
+    if not env_path.is_file():
+        return
+    try:
+        from dotenv import load_dotenv
+
+        load_dotenv(env_path, override=False)
+    except ImportError:
+        for line in env_path.read_text(encoding="utf-8", errors="ignore").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            key, _, val = line.partition("=")
+            key, val = key.strip(), val.strip().strip('"').strip("'")
+            if key and os.environ.get(key) is None:
+                os.environ[key] = val
 
 
 def main() -> int:
+    _load_dotenv()
     token = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
     chat_id = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
     text = os.environ.get(

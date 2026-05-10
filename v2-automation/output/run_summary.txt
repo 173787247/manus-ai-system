@@ -1,0 +1,43 @@
+time=2026-05-10T16:00:35.534010
+root=C:\Users\rchua\Desktop\AIFullStackDevelopment\manus-ai-system
+cmd_pytest=C:\Users\rchua\AppData\Local\Programs\Python\Python311\python.exe -m pytest C:\Users\rchua\Desktop\AIFullStackDevelopment\manus-ai-system\tests -v --tb=short
+pytest_exit=0
+--- pytest tail ---
+============================= test session starts =============================
+platform win32 -- Python 3.11.9, pytest-9.0.3, pluggy-1.6.0 -- C:\Users\rchua\AppData\Local\Programs\Python\Python311\python.exe
+cachedir: .pytest_cache
+metadata: {'Python': '3.11.9', 'Platform': 'Windows-10-10.0.26200-SP0', 'Packages': {'pytest': '9.0.3', 'pluggy': '1.6.0'}, 'Plugins': {'anyio': '4.13.0', 'langsmith': '0.7.38', 'asyncio': '1.3.0', 'cov': '7.1.0', 'html': '4.2.0', 'metadata': '3.1.1', 'mock': '3.15.1'}}
+rootdir: C:\Users\rchua\Desktop\AIFullStackDevelopment\manus-ai-system
+configfile: pytest.ini (WARNING: ignoring pytest config in pyproject.toml!)
+plugins: anyio-4.13.0, langsmith-0.7.38, asyncio-1.3.0, cov-7.1.0, html-4.2.0, metadata-3.1.1, mock-3.15.1
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 26 items
+
+tests/test_agent_manager.py::test_message_bus PASSED                     [  3%]
+tests/test_agent_manager.py::test_agent_manager_initialization PASSED    [  7%]
+tests/test_agent_manager.py::test_agent_manager_get_agent PASSED         [ 11%]
+tests/test_agent_manager.py::test_agent_manager_register_agent PASSED    [ 15%]
+tests/test_agent_manager.py::test_agent_manager_status PASSED            [ 19%]
+tests/test_base_agent.py::test_base_agent_initialization PASSED          [ 23%]
+tests/test_base_agent.py::test_base_agent_process PASSED                 [ 26%]
+tests/test_base_agent.py::test_base_agent_reset PASSED                   [ 30%]
+tests/test_base_agent.py::test_base_agent_status PASSED                  [ 34%]
+tests/test_base_agent.py::test_base_agent_statistics PASSED              [ 38%]
+tests/test_gui_agent.py::test_gui_agent_initialization PASSED            [ 42%]
+tests/test_gui_agent.py::test_action_parser PASSED                       [ 46%]
+tests/test_gui_agent.py::test_action_parser_validate PASSED              [ 50%]
+tests/test_gui_agent.py::test_action_parser_parse PASSED                 [ 53%]
+tests/test_integration.py::test_simple_task_flow PASSED                  [ 57%]
+tests/test_integration.py::test_agent_coordination PASSED                [ 61%]
+tests/test_knowledge_agent.py::test_knowledge_agent_initialization PASSED [ 65%]
+tests/test_knowledge_agent.py::test_knowledge_agent_retrieve PASSED      [ 69%]
+tests/test_knowledge_agent.py::test_knowledge_agent_merge_results PASSED [ 73%]
+tests/test_knowledge_agent.py::test_knowledge_agent_rerank PASSED        [ 76%]
+tests/test_planning_agent.py::test_planning_agent_initialization PASSED  [ 80%]
+tests/test_planning_agent.py::test_planning_agent_decompose_task PASSED  [ 84%]
+tests/test_planning_agent.py::test_planning_agent_determine_task_type PASSED [ 88%]
+tests/test_planning_agent.py::test_planning_agent_extract_keywords PASSED [ 92%]
+tests/test_task_executor.py::test_task_executor_initialization PASSED    [ 96%]
+tests/test_task_executor.py::test_task_executor_execute_structure PASSED [100%]
+
+======================== 26 passed, 1 warning in 3.80s ========================

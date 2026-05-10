@@ -7,7 +7,8 @@
 环境变量:
   MANUS_COST_LOG - 日志文件路径（默认 logs/manus_cost.jsonl）
 
-若无文件或为空，打印占位说明（仍可截图体现脚本存在）。
+若默认路径不存在且未设置 MANUS_COST_LOG，会尝试读取仓库内示例
+  docs/sample_manus_cost.jsonl（便于本地演示与截图）。
 """
 from __future__ import annotations
 
@@ -20,14 +21,29 @@ from pathlib import Path
 def main() -> int:
     root = Path(__file__).resolve().parents[2]
     default_log = root / "logs" / "manus_cost.jsonl"
-    log_path = Path(os.environ.get("MANUS_COST_LOG", str(default_log)))
+    sample_log = root / "docs" / "sample_manus_cost.jsonl"
+
+    if os.environ.get("MANUS_COST_LOG"):
+        log_path = Path(os.environ["MANUS_COST_LOG"].strip())
+        source = "MANUS_COST_LOG"
+    elif default_log.is_file():
+        log_path = default_log
+        source = "default logs/manus_cost.jsonl"
+    elif sample_log.is_file():
+        log_path = sample_log
+        source = "fallback docs/sample_manus_cost.jsonl"
+    else:
+        log_path = default_log
+        source = "default (missing)"
 
     print("MANUS cost summary")
     print(f"log_path={log_path}")
+    print(f"source={source}")
 
     if not log_path.is_file():
         print(
-            "(no log file yet — append JSON lines from your LLM wrapper to this path)"
+            "(no log file — create logs/manus_cost.jsonl or set MANUS_COST_LOG, "
+            "or keep docs/sample_manus_cost.jsonl for demo)"
         )
         return 0
 

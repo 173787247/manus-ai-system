@@ -1,5 +1,4 @@
-# 核心依赖
-python>=3.9
+# Python 建议版本: 3.9+（勿在此文件写 python>=x，pip 无法安装解释器）
 
 # LLM相关
 openai>=1.0.0
@@ -31,8 +30,7 @@ gradio>=4.0.0
 fastapi>=0.104.0
 uvicorn>=0.24.0
 
-# 异步处理
-asyncio>=3.4.3
+# 异步处理（asyncio 为标准库，无需安装）
 aiohttp>=3.9.0
 celery>=5.3.0
 

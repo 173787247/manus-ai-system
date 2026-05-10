@@ -85,7 +85,7 @@ pytest tests/ -v
 
 **V2 脚本使用镜像**：在安装前设置环境变量即可（见 `v2-automation/README.md`）。
 
-**截图占位**：将流水线 / Telegram / 日志或成本输出保存到 [`docs/screenshots/`](docs/screenshots/)。
+**运行截图**：三张提交用 PNG 已置于 [`docs/screenshots/`](docs/screenshots/)（CI / Telegram / 成本汇总），详见该目录说明。
 
 ---
 
@@ -151,7 +151,7 @@ manus-ai-system/
 ├── v3-multi-agent/                  # V3 多智能体演示
 ├── v4-production/                   # V4 生产化脚本（Telegram / 成本）
 ├── docs/
-│   ├── screenshots/                 # 提交用运行截图（按需添加）
+│   ├── screenshots/                 # 提交用运行截图（三张 PNG）
 │   ├── sample_manus_cost.jsonl      # 成本汇总示例数据
 │   ├── 01-系统架构设计.md
 │   ├── 02-技术选型.md
@@ -325,7 +325,7 @@ gui_result = manager.gui_agent.execute(plan['actions'])
 | V1–V4 目录 | 根目录 [`v1-skeleton/`](v1-skeleton/)～[`v4-production/`](v4-production/)，完整业务代码在 [`src/`](src/) |
 | README | 上文含项目名称、一句话描述、Mermaid 架构图、快速开始 |
 | 配置文件 | [`.env.example`](.env.example)、[`.gitignore`](.gitignore)、[`requirements.txt`](requirements.txt) |
-| 运行截图 ≥3 | 将 CI 通过、Telegram、`cost_log_summary` 或测试日志保存到 [`docs/screenshots/`](docs/screenshots/)（见该目录说明） |
+| 运行截图 ≥3 | [`docs/screenshots/`](docs/screenshots/) 已含三张 PNG（CI / Telegram / 成本汇总），命名见该目录说明 |
 | Git 历史 | 提交信息体现渐进开发（建议 ≥10 条）；推送前执行 `git log --oneline` 自检 |
 | 一键本地校验 | 仓库根目录执行 `scripts/verify_graduation.ps1`（Windows）或 `bash scripts/verify_graduation.sh`（Linux/macOS） |
 
